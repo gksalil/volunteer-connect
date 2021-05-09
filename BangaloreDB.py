@@ -13,6 +13,7 @@ from string import Template
 from format_message import format_string, BLR_MSG_TEMPLATE
 from site_c import SiteConfig
 from sink_whatsapp import send_message
+from sql_queries import *
 
 SERVICES = { "AMBULANCE": "ambulance", "BLOOD": "blood", "ICUBED": "ICUBED", "QUARANTINE": "quarantine", "PLASMA":"plasma", "OXYGEN": "oxygen"}
 SERV_STATUS = {"ENTRY_MADE": "Request Entered", "MESSAGE_SENT": "Message Send", "DUPLICATE": "Duplicate entry"}
@@ -41,63 +42,10 @@ class BangaloreRequest(DataBase):
     rapid_host = "RAPID_HOST"
     rapid_key = "RAPID_KEY"
 
-    create_table="CREATE TABLE IF NOT EXISTS %s (  \
-                    ID int PRIMARY KEY, \
-                    TIMESTAMP text , \
-                    SERV_REQUEST text , \
-                    PATIENT_NAME text , \
-                    AGE int , \
-                    GENDER text , \
-                    PLASMA_NEEDED text , \
-                    ATTENDER_NAME text, \
-                    ATTENDER_NUMBER text , \
-                    HOSPITALISATION_STATUS text , \
-                    CITY text , \
-                    DOCTOR_NAME text , \
-                    SPO2 real , \
-                    OTHER_DETAILS text, \
-                    COVID_TEST_DATE text , \
-                    COVID_TEST_STATUS text , \
-                    BU_NUM int , \
-                    SRF_NUM int , \
-                    LOCALITY text, \
-                    ZONE text, \
-                    CT_SCORE int, \
-                    PRE_EXISTING_DESEASE text, \
-                    COMMAND_CENTER_NAME text, \
-                    COMMAND_CENTER_NUM text, \
-                    REMARKS text, \
-                    SERVED_STATUS text \
-                      )" %( table_name)
+    create_table = blr_create_table % ( table_name)
+    insert_request = blr_insert_request %(table_name)
 
-    insert_request="INSERT INTO %s (ID , \
-                    TIMESTAMP , \
-                    SERV_REQUEST , \
-                    PATIENT_NAME , \
-                    AGE , \
-                    GENDER , \
-                    PLASMA_NEEDED , \
-                    ATTENDER_NAME , \
-                    ATTENDER_NUMBER , \
-                    HOSPITALISATION_STATUS , \
-                    CITY , \
-                    DOCTOR_NAME , \
-                    SPO2 , \
-                    OTHER_DETAILS , \
-                    COVID_TEST_DATE , \
-                    COVID_TEST_STATUS , \
-                    BU_NUM , \
-                    SRF_NUM , \
-                    LOCALITY , \
-                    ZONE , \
-                    CT_SCORE , \
-                    PRE_EXISTING_DESEASE , \
-                    COMMAND_CENTER_NAME , \
-                    COMMAND_CENTER_NUM , \
-                    REMARKS , \
-                    SERVED_STATUS ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)" %( table_name)
-
-    read_request = 'SELECT * from %s where SERVED_STATUS = "%s"' % ( table_name, SERV_STATUS['ENTRY_MADE'] )
+    read_request = blr_read_request % (table_name, SERV_STATUS['ENTRY_MADE'] )
   
     def __init__(self, service):
         super(BangaloreRequest, self).__init__()
